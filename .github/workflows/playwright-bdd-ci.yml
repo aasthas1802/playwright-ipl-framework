@@ -2,64 +2,49 @@ name: Playwright BDD CI
 
 on:
   push:
-    branches: [ master, remote ]
+    branches:
+      - main
+      - remote
 
   pull_request:
-    branches: [ master, remote ]
+    branches:
+      - main
+      - remote
 
 jobs:
 
   test:
 
-    name: Test on ${{ matrix.os }} - ${{ matrix.browser }}
-
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      fail-fast: false
-
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        browser: [chromium, firefox]
+    runs-on: ubuntu-latest
 
     steps:
 
-      - name: Checkout code
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup Java
+      - name: Set up Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 21
 
-      - name: Cache Maven packages
+      - name: Cache Maven Dependencies
         uses: actions/cache@v4
         with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
+          path: ~/.m2
+          key: maven-${{ hashFiles('**/pom.xml') }}
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: mvn clean install -DskipTests
 
       - name: Install Playwright Browsers
         run: mvn exec:java -e -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install"
 
       - name: Run Tests
-        run: mvn test -Dbrowser=${{ matrix.browser }}
+        run: mvn test
 
       - name: Upload Allure Results
-        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: allure-results-${{ matrix.os }}-${{ matrix.browser }}
+          name: allure-results
           path: target/allure-results
-
-      - name: Upload Logs
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: logs-${{ matrix.os }}-${{ matrix.browser }}
-          path: target/logs

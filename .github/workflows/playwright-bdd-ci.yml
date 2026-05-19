@@ -1,50 +1,47 @@
-name: Playwright BDD CI
+name: Playwright CI
 
 on:
   push:
-    branches:
-      - main
-      - remote
-
-  pull_request:
-    branches:
-      - main
-      - remote
+    branches: [ master ]
 
 jobs:
-
   test:
-
     runs-on: ubuntu-latest
 
     steps:
 
-      - name: Checkout Repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Java
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 21
 
-      - name: Cache Maven Dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2
-          key: maven-${{ hashFiles('**/pom.xml') }}
+      - name: Verify Java
+        run: java -version
+
+      - name: Verify Maven
+        run: mvn -version
 
       - name: Install Dependencies
         run: mvn clean install -DskipTests
 
       - name: Install Playwright Browsers
-        run: mvn exec:java -e -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install"
+        run: |
+          mvn exec:java \
+          -Dexec.mainClass=com.microsoft.playwright.CLI \
+          -Dexec.args="install"
 
       - name: Run Tests
-        run: mvn test
+        run: mvn test -X -e
 
-      - name: Upload Allure Results
+      - name: Upload Reports
         uses: actions/upload-artifact@v4
+        if: always()
         with:
-          name: allure-results
-          path: target/allure-results
+          name: reports
+          path: |
+            target/
+            playwright-report/

@@ -13,6 +13,9 @@ public class BasePage {
 
     public BasePage() {
         this.page = PlaywrightFactory.getPage();
+        page.setDefaultTimeout(60000);
+
+        page.setDefaultNavigationTimeout(60000);
     }
 
     // BASIC ACTIONS

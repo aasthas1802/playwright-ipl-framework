@@ -98,9 +98,14 @@
                 <version>3.2.5</version>
                 <configuration>
                     <includes>
-                        <include>**/*Runner.java</include>
-                        <include>**/*Test.java</include>
+                        <include>**/TestRunner.java</include>
                     </includes>
+                    <properties>
+                        <property>
+                            <name>dataproviderthreadcount</name>
+                            <value>3</value>
+                        </property>
+                    </properties>
                 </configuration>
             </plugin>
             <plugin>

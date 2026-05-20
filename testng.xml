@@ -1,17 +1,13 @@
-<!-- Playwright IPL TestNG suite:
-     - parallel tests with thread-count=2
-     - contains IPL Table Test class -->
+<!-- Playwright IPL TestNG suite for Cucumber BDD -->
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 
-<suite name="Playwright Suite" parallel="classes" thread-count="3">
+<suite name="Playwright Suite" parallel="tests" thread-count="3">
 
-    <test name="IPL Table Test">
+    <test name="Cucumber BDD Tests">
 
         <classes>
 
-            <class name="tests.IPLTableTest"/>
-            <class name="tests.AutoWaitTest"/>
-            <class name="tests.ScreenshotTest"/>
+            <class name="runner.TestRunner"/>
 
         </classes>
 

@@ -28,14 +28,15 @@ jobs:
       - name: Install Dependencies
         run: mvn clean install -DskipTests
 
-      - name: Install Playwright Browsers
+      - name: Install Playwright Browsers with Dependencies
         run: |
           mvn exec:java \
           -Dexec.mainClass=com.microsoft.playwright.CLI \
-          -Dexec.args="install"
+          -Dexec.classpathScope=test \
+          -Dexec.args="install --with-deps"
 
       - name: Run Tests
-        run: mvn test -X -e
+        run: mvn test -e
 
       - name: Upload Reports
         uses: actions/upload-artifact@v4
@@ -43,5 +44,6 @@ jobs:
         with:
           name: reports
           path: |
-            target/
-            playwright-report/
+            target/surefire-reports/
+            target/allure-results/
+            allure-results/
